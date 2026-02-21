@@ -96,8 +96,8 @@
             <el-image 
               v-if="currentRow.crtfUrl"
               style="width: 200px; height: 200px"
-              :src="currentRow.crtfUrl" 
-              :preview-src-list="[currentRow.crtfUrl]"
+              :src="getImageUrl(currentRow.crtfUrl)" 
+              :preview-src-list="[getImageUrl(currentRow.crtfUrl)]"
               fit="contain" />
               <div v-else class="no-image">暂无图片</div>
           </el-col>
@@ -106,8 +106,8 @@
             <el-image 
               v-if="currentRow.faceImgUrl"
               style="width: 200px; height: 200px"
-              :src="currentRow.faceImgUrl" 
-              :preview-src-list="[currentRow.faceImgUrl]"
+              :src="getImageUrl(currentRow.faceImgUrl)" 
+              :preview-src-list="[getImageUrl(currentRow.faceImgUrl)]"
               fit="contain" />
               <div v-else class="no-image">暂无图片</div>
           </el-col>
@@ -123,7 +123,7 @@
     <!-- 认证弹窗 -->
     <el-dialog
       v-model="certifyDialogVisible"
-      title="人员认证"
+      title="认证"
       width="520px"
       append-to-body
       :close-on-click-modal="false"
@@ -135,6 +135,9 @@
         </el-form-item>
         <el-form-item label="人员模板号" prop="psnTmplNo">
           <el-input v-model="certifyForm.psnTmplNo" placeholder="请输入人员模板号" clearable />
+        </el-form-item>
+        <el-form-item label="证件号" prop="certno">
+          <el-input v-model="certifyForm.certno" placeholder="请输入证件号" clearable />
         </el-form-item>
         <el-form-item label="医疗机构编码">
           <el-input v-model="certifyForm.medinsCode" placeholder="请输入医疗机构编码" clearable />
@@ -205,7 +208,8 @@ const fileInputRef = ref(null)
 
 const certifyForm = reactive({
   psnName: '张三',
-  psnTmplNo: '430124199501011234',
+  psnTmplNo: '1001',
+  certno: '430124199501011234',
   medinsCode: 'H1000001',
   medinsName: '测试医院-1',
   photoFile: null,
@@ -278,6 +282,12 @@ const handleView = (row) => {
   dialogVisible.value = true
 }
 
+// 获取图片URL
+const getImageUrl = (keyId) => {
+  if (!keyId) return ''
+  return `/mifss/ipt/file/download/${keyId}`
+}
+
 // 打开认证弹窗
 const openCertifyDialog = () => {
   certifyDialogVisible.value = true
@@ -286,7 +296,8 @@ const openCertifyDialog = () => {
 // 重置认证表单
 const resetCertifyForm = () => {
   certifyForm.psnName = '张三'
-  certifyForm.psnTmplNo = '123456'
+  certifyForm.psnTmplNo = '1001'
+  certifyForm.certno = '430124199501011234'
   certifyForm.medinsCode = 'H1000001'
   certifyForm.medinsName = '测试医院-1'
   certifyForm.photoFile = null
@@ -369,6 +380,7 @@ const handleCertify = async () => {
       const certifyData = {
         psnName: certifyForm.psnName,
         psnTmplNo: certifyForm.psnTmplNo,
+        certno: certifyForm.certno,
         medinsCode: certifyForm.medinsCode,
         medinsName: certifyForm.medinsName,
         crtfUrl: crtfUrl,
